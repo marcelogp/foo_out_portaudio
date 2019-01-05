@@ -165,16 +165,16 @@ public:
 	//! Updates playback; queries whether	the device is ready to receive new data.
 	//! @param p_ready On success, receives value indicating whether the device is ready for next process_samples() call.
 	void update(bool & p_ready) {
-		resumeStream();
 		int buffer_used = (bufferWritePos - bufferReadPos + MAX_BUFFER_SIZE) % MAX_BUFFER_SIZE;
 		//console::printf(COMPONENT_NAME " update %d", buffer_used);
 		p_ready = (buffer_used < buffer_samples);
 	}
 	//! Pauses/unpauses playback.
 	void pause(bool p_state) {
+		//console::printf(COMPONENT_NAME " pause");
 		if (!stream || !initialized)
 			return;
-		if (p_state) flush();
+		if (p_state) checkError(Pa_AbortStream(stream));
 		else resumeStream();
 	}
 	//! Flushes queued audio data. Called after seeking.
